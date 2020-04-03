@@ -9,7 +9,7 @@ difference methods.
 
 ## To Do:   
 - Binder:
-  - [ ] export environment
+  - [x] export environment
   - [ ] set up binder link
   - [ ] make `setup.py` file for `advdiff` package
 - Iterative Solvers:
