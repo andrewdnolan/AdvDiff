@@ -1,2 +1,32 @@
-# AdvDiff
-EASC 711: Numerical Methods Final Project 
+# EASC 711: Numerical Methods Final Project   
+
+Numerical experiments with the advection diffusion equation using finite
+difference methods.
+
+## Notebooks
+- [1-Diffusion](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/Diffusion_1D.ipynb): Crank-Nicolson solution to the diffusion equation in one dimension.
+
+
+## To Do:   
+- Binder:
+  - [ ] export environment
+  - [ ] set up binder link
+  - [ ] make `setup.py` file for `advdiff` package
+- Iterative Solvers:
+    - [ ] add GMRES
+    - [ ] add conjugate gradient
+    - [ ] sparse matrix implementation?
+
+- Diffusion Equation:  
+   - [ ] stability analysis
+   - [ ] python implementation
+   - [ ] references section in notebook
+   - [ ] experiments to determine most efficient solver
+
+- Avection Equation:
+  - [ ] port info from [MATH 709 Final Proj](https://github.com/andrewdnolan/MATH-709-Final-Project)
+  - [ ] state mathematical problem and numerical methods to solve  
+
+
+- Fractional Step Methods:
+  - [ ] Peclet Number based experiments
