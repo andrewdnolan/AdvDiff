@@ -1,12 +1,13 @@
 # EASC 711: Numerical Methods Final Project   
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/andrewdnolan/AdvDiff/master)
 
 Numerical experiments with the advection diffusion equation using finite
-difference methods.
+difference methods. This is the final project repository for EASC 711: Numerical
+Methods. Repository structure is loosely based on the [`CFD Python`](https://github.com/barbagroup/CFDPython)  repository.
+
 
 ## Notebooks
->  To run these notebooks interactively launch a binder session with:[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/andrewdnolan/AdvDiff/master) 
+>  To run these notebooks interactively launch a binder session with: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/andrewdnolan/AdvDiff/master)
 
 - [1-Diffusion](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/Diffusion_1D.ipynb): Crank-Nicolson solution to the diffusion equation in one dimension.
 - [2-Advection](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/Advection_1D.ipynb): Lax-Wendroff, Beam-Splitting, Slope Limiting methods advection equation in one dimension.
