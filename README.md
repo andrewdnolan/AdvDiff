@@ -28,16 +28,18 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 - Diffusion Equation:  
    - [ ] stability analysis
    - [x] python implementation
-   - [ ] Boundary conditions are wonky
+   - [x] Boundary conditions are wonky
    - [ ] Periodic Boundary Conditions ?
    - [ ] references section in notebook
    - [ ] experiments to determine most efficient solver
 
 - Avection Equation:
-  - [ ] port info from [MATH 709 Final Proj](https://github.com/andrewdnolan/MATH-709-Final-Project)
-  - [ ] state mathematical problem and numerical methods to solve  
+  - [x] port info from [MATH 709 Final Proj](https://github.com/andrewdnolan/MATH-709-Final-Project)
+  - [x] state mathematical problem and numerical methods to solve  
+  - [ ] Beam-Splitting Method
+  - [ ] TVD method??
   - [ ] stability analysis, CFL condition
-
+  - [ ] Reference section
 
 - Fractional Step Methods:
   - [ ] scale parameters to glaciological scales
