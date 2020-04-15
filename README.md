@@ -36,7 +36,8 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 - Avection Equation:
   - [x] port info from [MATH 709 Final Proj](https://github.com/andrewdnolan/MATH-709-Final-Project)
   - [x] state mathematical problem and numerical methods to solve  
-  - [ ] Beam-Splitting Method
+  - [x] Beam-Splitting Method
+  - [ ] Analytical Solution
   - [ ] TVD method??
   - [ ] stability analysis, CFL condition
   - [ ] Reference section
