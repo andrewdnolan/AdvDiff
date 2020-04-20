@@ -18,18 +18,12 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
   - [x] export environment
   - [x] set up binder link
   - [ ] fix `requirments.txt` file
-  - [ ] make `setup.py` file for `advdiff` package  
-
-- Iterative Solvers:
-    - [ ] add GMRES
-    - [ ] add conjugate gradient
-    - [ ] sparse matrix implementation?
 
 - Diffusion Equation:  
    - [ ] stability analysis
    - [x] python implementation
    - [x] Boundary conditions are wonky
-   - [ ] Periodic Boundary Conditions ?
+   - [x] Periodic Boundary Conditions ?
    - [ ] references section in notebook
    - [ ] experiments to determine most efficient solver
 

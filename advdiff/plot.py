@@ -30,7 +30,7 @@ class animation(object):
 
         fig, ax = plt.subplots(1,1,figsize=(12,6))
         ax.set_xlim(self.x[0], self.x[-1] )
-        ax.set_ylim(0, 0.6)
+        ax.set_ylim(0, 8.2)
 
         ax.set_ylabel(self.ylabels)
         ax.set_xlabel(self.ylabels)
