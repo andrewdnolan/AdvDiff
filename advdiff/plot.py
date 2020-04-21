@@ -42,7 +42,7 @@ class animation(object):
 
         def animater(i):
             global x,u
-            line[0].set_data(self.x, self.y[:,i])
+            line[0].set_data(self.x, self.y[i,:])
             return line
 
         anim = animation.FuncAnimation(fig, animater,
