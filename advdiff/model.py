@@ -246,7 +246,7 @@ class Diffusion(model):
         if dt != None:
             self.dt = dt
         else:
-            self.dt = (σ*self.dx)**2/κ
+            self.dt = (σ*self.dx)/κ
 
     def __init__(self,params,adv_params):
         super().__init__(params)
@@ -315,10 +315,11 @@ class AdvDiff(model):
         self.κ  = κ
         self.a  = a
         self.σ  = σ
+
         if dt != None:
             self.dt = dt
         else:
-            self.dt = (σ*self.dx)**2/a
+            self.dt = (σ*self.dx)/a
 
     def __init__(self,params,adv_params):
         super().__init__(params)

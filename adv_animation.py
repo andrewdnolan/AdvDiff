@@ -9,6 +9,14 @@ sys.path.append('../')
 from advdiff.solvers import TDMA
 from advdiff.plot import animation
 
+plt.rcParams['font.size'] = 14
+plt.rcParams['axes.labelsize'] = 14
+plt.rcParams['axes.titlesize'] = 14
+plt.rcParams['xtick.labelsize'] = 14
+plt.rcParams['ytick.labelsize'] = 14
+plt.rcParams['legend.fontsize'] = 14
+plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['text.usetex'] = True
 
 ########################################################
 #################   Init. Constant   ###################
@@ -18,7 +26,7 @@ L  = 2*np.pi               # Domain Length
 nx = 60                    # Num. grid cells
 dx = L/(nx-1)              # grid spacing
 
-nt = 1000                  # Num time steps
+nt = 2116                  # Num time steps
 σ  = 0.5                   # courant number
 dt = (σ*dx)**2/a           # time step
 
@@ -74,8 +82,8 @@ ax.set_xlabel(' x ')
 line0, = ax.plot([], [], 'x', lw=2, color='lightblue',label='FTCS')
 line1, = ax.plot([], [], 'o', lw=2, color='#707BA7',label='Upwind')
 line2, = ax.plot([], [], '3', lw=2, color='g',label='Lax-Wefford')
-line3, = ax.plot([], [], '^', lw=2, color='b',label='BeanWarming')
-line4, = ax.plot([], [], lw=2, color='k',label='Analtical',zorder=0)
+line3, = ax.plot([], [], '^', lw=2, color='b',label='BeamWarming')
+line4, = ax.plot([], [], lw=2, color='k',label='Analytical',zorder=0)
 
 line = [line0,line1, line2,line3,line4]
 ax.legend(loc=3)
@@ -91,5 +99,6 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig, animate,
                                frames=range(0,nt,10), interval=100, blit=True)
+
 plt.close()
 anim
