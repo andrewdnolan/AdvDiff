@@ -21,23 +21,120 @@ class model:
         self.parameters(**params)
         self.domain()
 
-    def init_cond(self):
-        pass
+    def FTCS(self,j,ustar=None):
 
-    def analytical(self,):
-        pass
+        if isinstance(ustar, np.ndarray):
+            ustar[j+1,1:-1]  = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
+                                * (ustar[j,2:] - ustar[j,0:-2])
 
-    def dump(self):
-        '''Dump params. to HDF5 file
-        '''
-        with open(os.path.join(self.out_dir,'params.json'),'w') as fp:
-            json.dump()
-        pass
+            ustar[j+1, 0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
+                                * (ustar[j,1] - ustar[j,-1])
 
-    def log(self):
-        '''Store info for log file
-        '''
-        pass
+            ustar[j+1,-1] = ustar[j, -1 ] - ((self.dt*self.a)/(self.dx*2))\
+                                * (ustar[j,0] - ustar[j,-2])
+
+            return ustar[j+1,:]
+
+        else:
+            self.U[j+1,1:-1]  = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
+                                * (self.U[j,2:] - self.U[j,0:-2])
+            self.U[j+1, 0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
+                                * (self.U[j,1] - self.U[j,-1])
+            self.U[j+1,-1] = self.U[j, -1 ] - ((self.dt*self.a)/(self.dx*2))\
+                                * (self.U[j,0] - self.U[j,-2])
+
+    def UpWind(self,j,ustar=None):
+        """ For only one time step!!!!
+        """
+        if isinstance(ustar, np.ndarray):
+            ustar[j+1,1:] = ustar[j,1:] - ((self.dt*self.a)/self.dx)\
+                                * (ustar[j,1:] - ustar[j,0:-1])
+
+            ustar[j+1,0] = ustar[j,0] - ((self.dt*self.a)/self.dx)\
+                                * (ustar[j,0] - ustar[j,-1])
+            return ustar[j+1,:]
+
+        else:
+            self.U[j+1,1:] = self.U[j,1:] - ((self.dt*self.a)/self.dx)\
+                                * (self.U[j,1:] - self.U[j,0:-1])
+
+            self.U[j+1,0] = self.U[j,0] - ((self.dt*self.a)/self.dx)\
+                                * (self.U[j,0] - self.U[j,-1])
+
+    def LaxWendroff(self,j,ustar=None):
+        if isinstance(ustar, np.ndarray):
+
+            ustar[j+1,1:-1] = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
+            *(ustar[j,2:] - ustar[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(ustar[j,2:] - 2*ustar[j,1:-1] + ustar[j,0:-2])
+
+            ustar[j+1,0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
+            *(ustar[j,1] - ustar[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(ustar[j,1] - 2*ustar[j,0] + ustar[j,-1])
+
+            ustar[j+1,-1] = ustar[j,-1] - ((self.dt*self.a)/(self.dx*2))\
+            *(ustar[j,0] - ustar[j,-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(ustar[j,0] - 2*ustar[j,-1] + ustar[j,-2])
+
+            return ustar[j+1,:]
+
+        else:
+            self.U[j+1,1:-1] = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
+            *(self.U[j,2:] - self.U[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(self.U[j,2:] - 2*self.U[j,1:-1] + self.U[j,0:-2])
+
+            self.U[j+1,0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
+            *(self.U[j,1] - self.U[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(self.U[j,1] - 2*self.U[j,0] + self.U[j,-1])
+
+            self.U[j+1,-1] = self.U[j,-1] - ((self.dt*self.a)/(self.dx*2))\
+            *(self.U[j,0] - self.U[j,-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
+            *(self.U[j,0] - 2*self.U[j,-1] + self.U[j,-2])
+
+    def BeamWarming(self,j,ustar=None):
+        if isinstance(ustar, np.ndarray):
+            ustar[j+1,2:] = ustar[j,2:] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*ustar[j,2:] - 4*ustar[j,1:-1] + ustar[j,0:-2]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,2:] \
+                        - 2*ustar[j,1:-1] + ustar[j,0:-2])
+
+            ustar[j+1, 0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*ustar[j,0] - 4*ustar[j,-1] + ustar[j,-2]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,0] \
+                        - 2*ustar[j,-1] + ustar[j,-2])
+
+            ustar[j+1, 1] = ustar[j,1] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*ustar[j,1] - 4*ustar[j,0] + ustar[j,-1]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,1] \
+                        - 2*ustar[j,0] + ustar[j,-1])
+
+            ustar[j+1, 2] = ustar[j,2] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*ustar[j,2] - 4*ustar[j,1] + ustar[j, 0]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,2] \
+                        - 2*ustar[j,1] + ustar[j, 0])
+
+            return ustar[j+1,:]
+
+        else:
+            self.U[j+1,2:] = self.U[j,2:] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*self.U[j,2:] - 4*self.U[j,1:-1] + self.U[j,0:-2]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,2:] \
+                        - 2*self.U[j,1:-1] + self.U[j,0:-2])
+
+            self.U[j+1, 0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*self.U[j,0] - 4*self.U[j,-1] + self.U[j,-2]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,0] \
+                        - 2*self.U[j,-1] + self.U[j,-2])
+
+            self.U[j+1, 1] = self.U[j,1] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*self.U[j,1] - 4*self.U[j,0] + self.U[j,-1]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,1] \
+                        - 2*self.U[j,0] + self.U[j,-1])
+
+            self.U[j+1, 2] = self.U[j,2] - ((self.dt*self.a)/(self.dx*2))\
+                        * (3*self.U[j,2] - 4*self.U[j,1] + self.U[j, 0]) \
+                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,2] \
+                        - 2*self.U[j,1] + self.U[j, 0])
 
 class advection(model):
     '''1-D Advection Class
@@ -62,7 +159,7 @@ class advection(model):
         if dt != None:
             self.dt = dt
         else:
-            self.dt = (σ*self.dx)**2/a
+            self.dt = (σ*self.dx)/a
 
     def __init__(self,params,adv_params):
         super().__init__(params)
@@ -79,44 +176,10 @@ class advection(model):
             print("\n\tBoundary Conditions Must be:\n\t\
             Periodic, Dirichlet, or Neumann\n")
 
-    def FTCS(self):
+    def solver(self,solver):
+        self.solver = solver
 
-        for j in range(0,self.nt-1):
-            self.U[j+1,1:-1]  = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-                                * (self.U[j,2:] - self.U[j,0:-2])
-
-            self.U[j+1, 0] = self.U[j+1,-2]
-            self.U[j+1,-1] = self.U[j+1,1]
-
-    def UpWind(self):
-        for j in range(0,self.nt-1):
-            self.U[j+1,1:-1] = self.U[j,1:-1] - ((self.dt*self.a)/self.dx)\
-                                * (self.U[j,1:-1] - self.U[j,0:-2])
-
-            self.U[j+1, 0] = self.U[j+1,-2]
-            self.U[j+1,-1] = self.U[j+1,1]
-
-    def LaxWendroff(self):
-        for j in range(0,self.nt-1):
-            self.U[j+1,1:-1] = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-            *(self.U[j,2:] - self.U[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(self.U[j,2:] - 2*self.U[j,1:-1] + self.U[j,0:-2])
-
-            self.U[j+1, 0] = self.U[j+1,-2]
-            self.U[j+1,-1] = self.U[j+1,1]
-
-    def BeamWarming(self):
-        for j in range(0,self.nt-1):
-            for i in range(1,self.nx-1):
-                self.U[j+1,i] = self.U[j,i] - ((self.dt*self.a)/(self.dx*2))\
-                            * (3*self.U[j,i] - 4*self.U[j,i-1] + self.U[j,i-2]) \
-                            + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,i] \
-                            - 2*self.U[j,i-1] + self.U[j,i-2])
-
-            self.U[j+1, 0] = self.U[j+1,-2]
-            self.U[j+1,-1] = self.U[j+1,1]
-
-    def run(self,solver='UpWind'):
+    def run(self,solver='UpWind',w=None):
         """Run the Integration Scheme
 
         This function numerically solves the advection equation and writes
@@ -146,10 +209,19 @@ class advection(model):
         >>>> model.run('UpWind')
 
         """
+
         if LA.norm(self.U[:,0]) == 0:
             raise Exception('Initial condition not set')
         else:
-            self.__getattribute__(solver)()
+            #self.solver(solver)
+            if isinstance(w,str):
+                U = self.U.copy()
+                for t in range(0,self.nt-1):
+                    U[t+1,:] = self.__getattribute__(solver)(t,U)
+                return U
+            else:
+                for t in range(0,self.nt-1):
+                    self.__getattribute__(solver)(t)
 
 class Diffusion(model):
     '''1-D Diffusion Class
@@ -180,7 +252,7 @@ class Diffusion(model):
         super().__init__(params)
         self.diff_parameters(**adv_params)
 
-    def crank_nicolson(self,w=False,dt=None):
+    def crank_nicolson(self,w=None,dt=None):
         """ Crank Nicolson
 
         Keyword arguments:
@@ -202,30 +274,25 @@ class Diffusion(model):
         A = np.diagflat([[(1+2*r) for __ in range(self.nx)]]) + \
             np.diagflat([[  (-r)  for __ in range(self.nx-1)]],1) +\
             np.diagflat([[  (-r)  for __ in range(self.nx-1)]],-1)
-
+        A[0,-1] = -r
+        A[-1,0] = -r
         B = np.diagflat([[(1-2*r) for __ in range(self.nx)]]) + \
             np.diagflat([[  (r)   for __ in range(self.nx-1)]],1) +\
             np.diagflat([[  (r)   for __ in range(self.nx-1)]],-1)
+        B[0,-1] = r
+        B[-1,0] = r
 
-        if w == 'w' or w == True:
+        if isinstance(w,str):
             U = self.U.copy()
-            for t in range(0,self.nt):
-                b     = B.dot(U[t,:])       # left vect.
-                b[0]  = b[1]                     # boundary cond.
-                b[-1] = b[-2]                    # boundary cond.
-                U[t+1,:]  = TDMA(A,b).flatten()  # itterative solv.
-                U[t+1,0]  = U[t+1,1]             # boundary cond.
-                U[t+1,-1] = U[t+1,-2]            # boundary cond.
+            for t in range(0,self.nt-1):
+                b  = B.dot(U[t,:])       # left vect.
+                U[t+1,:]  = LA.solve(A,b)        # itterative solv.
             return U
 
         else:
-            for t in range(0,self.nt):
+            for t in range(0,self.nt-1):
                 b     = B.dot(self.U[t,:])            # left vect.
-                b[0]  = b[1]                          # boundary cond.
-                b[-1] = b[-2]                         # boundary cond.
-                self.U[t+1,:]  = TDMA(A,b).flatten()  # itterative solv.
-                self.U[t+1,0]  = self.U[t+1,1]        # boundary cond.
-                self.U[t+1,-1] = self.U[t+1,-2]       # boundary cond.
+                self.U[t+1,:]  = LA.solve(A,b)        # itterative solv.
 
 class AdvDiff(model):
     '''1-D Advection Diffusion Class
@@ -302,123 +369,6 @@ class AdvDiff(model):
         else:
             b = self.B.dot(self.U[t,:])            # left vect.
             self.U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
-
-
-    def FTCS(self,j,ustar=None):
-
-        if isinstance(ustar, np.ndarray):
-            ustar[j+1,1:-1]  = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-                                * (ustar[j,2:] - ustar[j,0:-2])
-
-            ustar[j+1, 0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
-                                * (ustar[j,1] - ustar[j,-1])
-
-            ustar[j+1,-1] = ustar[j, -1 ] - ((self.dt*self.a)/(self.dx*2))\
-                                * (ustar[j,0] - ustar[j,-1])
-
-            return ustar[j+1,:]
-
-        else:
-            self.U[j+1,1:-1]  = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-                                * (self.U[j,2:] - self.U[j,0:-2])
-            self.U[j+1, 0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
-                                * (self.U[j,1] - self.U[j,-1])
-            self.U[j+1,-1] = self.U[j, -1 ] - ((self.dt*self.a)/(self.dx*2))\
-                                * (self.U[j,0] - self.U[j,-1])
-
-    def UpWind(self,j,ustar=None):
-        """ For only one time step!!!!
-        """
-        if isinstance(ustar, np.ndarray):
-            ustar[j+1,1:] = ustar[j,1:] - ((self.dt*self.a)/self.dx)\
-                                * (ustar[j,1:] - ustar[j,0:-1])
-
-            ustar[j+1,0] = ustar[j,0] - ((self.dt*self.a)/self.dx)\
-                                * (ustar[j,0] - ustar[j,-1])
-            return ustar[j+1,:]
-
-        else:
-            self.U[j+1,1:] = self.U[j,1:] - ((self.dt*self.a)/self.dx)\
-                                * (self.U[j,1:] - self.U[j,0:-1])
-
-            self.U[j+1,0] = self.U[j,0] - ((self.dt*self.a)/self.dx)\
-                                * (self.U[j,0] - self.U[j,-1])
-
-    def LaxWendroff(self,j,ustar=None):
-        if isinstance(ustar, np.ndarray):
-
-            ustar[j+1,1:-1] = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-            *(ustar[j,2:] - ustar[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(ustar[j,2:] - 2*ustar[j,1:-1] + ustar[j,0:-2])
-
-            ustar[j+1,0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
-            *(ustar[j,1] - ustar[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(ustar[j,1] - 2*ustar[j,0] + ustar[j,-1])
-
-            ustar[j+1,-1] = ustar[j,-1] - ((self.dt*self.a)/(self.dx*2))\
-            *(ustar[j,-1] - ustar[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(ustar[j,0] - 2*ustar[j,-1] + ustar[j,-2])
-
-            return ustar[j+1,:]
-
-        else:
-            self.U[j+1,1:-1] = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
-            *(self.U[j,2:] - self.U[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(self.U[j,2:] - 2*self.U[j,1:-1] + self.U[j,0:-2])
-
-            self.U[j+1,0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
-            *(self.U[j,1] - self.U[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(self.U[j,1] - 2*self.U[j,0] + self.U[j,-1])
-
-            self.U[j+1,-1] = self.U[j,-1] - ((self.dt*self.a)/(self.dx*2))\
-            *(self.U[j,-1] - self.U[j,-1]) + ((self.dt*self.a)**2/(2*self.dx**2))\
-            *(self.U[j,0] - 2*self.U[j,-1] + self.U[j,-2])
-
-
-    def BeamWarming(self,j,ustar=None):
-        if isinstance(ustar, np.ndarray):
-            ustar[j+1,2:] = ustar[j,2:] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*ustar[j,2:] - 4*ustar[j,1:-1] + ustar[j,0:-2]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,2:] \
-                        - 2*ustar[j,1:-1] + ustar[j,0:-2])
-
-            ustar[j+1, 0] = ustar[j,0] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*ustar[j,0] - 4*ustar[j,-1] + ustar[j,-2]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,0] \
-                        - 2*ustar[j,-1] + ustar[j,-2])
-
-            ustar[j+1, 1] = ustar[j,1] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*ustar[j,1] - 4*ustar[j,0] + ustar[j,-1]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,1] \
-                        - 2*ustar[j,0] + ustar[j,-1])
-
-            ustar[j+1, 2] = ustar[j,2] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*ustar[j,2] - 4*ustar[j,1] + ustar[j, 0]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,2] \
-                        - 2*ustar[j,1] + ustar[j, 0])
-
-            return ustar[j+1,:]
-
-        else:
-            self.U[j+1,2:] = self.U[j,2:] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*self.U[j,2:] - 4*self.U[j,1:-1] + self.U[j,0:-2]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,2:] \
-                        - 2*self.U[j,1:-1] + self.U[j,0:-2])
-
-            self.U[j+1, 0] = self.U[j,0] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*self.U[j,0] - 4*self.U[j,-1] + self.U[j,-2]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,0] \
-                        - 2*self.U[j,-1] + self.U[j,-2])
-
-            self.U[j+1, 1] = self.U[j,1] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*self.U[j,1] - 4*self.U[j,0] + self.U[j,-1]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,1] \
-                        - 2*self.U[j,0] + self.U[j,-1])
-
-            self.U[j+1, 2] = self.U[j,2] - ((self.dt*self.a)/(self.dx*2))\
-                        * (3*self.U[j,2] - 4*self.U[j,1] + self.U[j, 0]) \
-                        + ((self.dt*self.a)**2/(2*self.dx**2))*(self.U[j,2] \
-                        - 2*self.U[j,1] + self.U[j, 0])
 
     def Goundov(self,explict='UpWind',w=True):
         self.init_CN()

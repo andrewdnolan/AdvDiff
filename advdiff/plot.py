@@ -27,22 +27,25 @@ class animation(object):
         import matplotlib.pyplot as plt
         from matplotlib import animation, rc
         rc('animation', html='jshtml')
+        plt.rcParams['font.size'] = 14
 
         fig, ax = plt.subplots(1,1,figsize=(12,6))
         ax.set_xlim(self.x[0], self.x[-1] )
-        ax.set_ylim(0, 8.2)
+        ax.set_ylim(0, 17.2)
 
         ax.set_ylabel(self.ylabels)
-        ax.set_xlabel(self.ylabels)
+        ax.set_xlabel(self.xlabels)
 
-        line1, = ax.plot([], [], lw=2, color='lightblue',label='Crank-Nicolson')
+        line1, = ax.plot([], [], 'x', lw=2, color='r',label='Crank-Nicolson')
+        line2, = ax.plot([], [], lw=2, color='darkslategrey',label='Analytical')
 
-        line = [line1]
+        line = [line1,line2]
         ax.legend(loc=1)
 
         def animater(i):
             global x,u
-            line[0].set_data(self.x, self.y[i,:])
+            line[0].set_data(self.x, self.y[0][i,:])
+            line[1].set_data(self.x, self.y[1][i,:])
             return line
 
         anim = animation.FuncAnimation(fig, animater,
