@@ -11,13 +11,13 @@ from advdiff.model import advection
 #################   Init. Constant   ###################
 ########################################################
 κ  = 0.3                   # Diffusivity
-a  = 3.                    # wave speed
+a  = 0.3                   # wave speed
 L  = np.pi*24.             # Domain Length
-nx = 1000                  # Num. grid cells
+nx = 500                   # Num. grid cells
 dx = L/(nx-1)              # grid spacing
 
-nt = 500                   # Num time steps
-σ  = .75                   # courant number
+nt = 5000                  # Num time steps
+σ  = .1                    # courant number
 dt = (σ*dx)**2/κ           # time step
 
 M = 1
@@ -59,7 +59,7 @@ for t in range(0,nt):
 
     #U^{n+1} &= \mathcal{N}_{\mathcal{B}}(U^*,k)
     u[t+1,1:-1] = u_star[t,1:-1] - ((dt*a)/dx) * (u_star[t,1:-1] - u_star[t,0:-2])
-    exact[t,:] = (M / (P *(4*np.pi*κ*(0.1 + t*dt))**0.5)) * np.exp(-(((x-(x_0 + a*(0.1 + t*dt)))**2)/(4*κ*(0.1 + t*dt))))
-    plt.plot(x,u[t+1,:])
-
+    exact[t+1,:] = (M / (P *(4*np.pi*κ*(0.1 + t*dt))**0.5)) * np.exp(-(((x-(x_0 + a*(0.1 + t*dt)))**2)/(4*κ*(0.1 + t*dt))))
+plt.plot(x,exact[-1,:])
+plt.plot(x,u[t-1,:],'D')
 plt.show()

@@ -1,8 +1,7 @@
-import os
-import json
+#!/usr/bin/env python3
+
 import numpy as np
 import scipy.linalg as LA
-
 
 class model:
 
@@ -210,7 +209,7 @@ class advection(model):
 
         """
 
-        if LA.norm(self.U[:,0]) == 0:
+        if LA.norm(self.U[0,:]) == 0:
             raise Exception('Initial condition not set')
         else:
             #self.solver(solver)
@@ -248,11 +247,11 @@ class Diffusion(model):
         else:
             self.dt = (σ*self.dx)/κ
 
-    def __init__(self,params,adv_params):
+    def __init__(self,params,diff_params):
         super().__init__(params)
-        self.diff_parameters(**adv_params)
+        self.diff_parameters(**diff_params)
 
-    def crank_nicolson(self,w=None,dt=None):
+    def crank_nicolson(self,t,U=None,dt=None):
         """ Crank Nicolson
 
         Keyword arguments:
@@ -271,29 +270,39 @@ class Diffusion(model):
 
         r  = (self.κ*dt)/(2*self.dx**2)      # matrix const.
 
-        A = np.diagflat([[(1+2*r) for __ in range(self.nx)]]) + \
-            np.diagflat([[  (-r)  for __ in range(self.nx-1)]],1) +\
-            np.diagflat([[  (-r)  for __ in range(self.nx-1)]],-1)
-        A[0,-1] = -r
-        A[-1,0] = -r
-        B = np.diagflat([[(1-2*r) for __ in range(self.nx)]]) + \
-            np.diagflat([[  (r)   for __ in range(self.nx-1)]],1) +\
-            np.diagflat([[  (r)   for __ in range(self.nx-1)]],-1)
-        B[0,-1] = r
-        B[-1,0] = r
+        if hasattr(self, 'A') == False:
+            self.A = np.diagflat([[(1+2*r) for __ in range(self.nx)]]) + \
+                np.diagflat([[  (-r)  for __ in range(self.nx-1)]],1) +\
+                np.diagflat([[  (-r)  for __ in range(self.nx-1)]],-1)
+            self.A[0,-1] = -r
+            self.A[-1,0] = -r
+            self.B = np.diagflat([[(1-2*r) for __ in range(self.nx)]]) + \
+                np.diagflat([[  (r)   for __ in range(self.nx-1)]],1) +\
+                np.diagflat([[  (r)   for __ in range(self.nx-1)]],-1)
+            self.B[0,-1] = r
+            self.B[-1,0] = r
 
-        if isinstance(w,str):
-            U = self.U.copy()
-            for t in range(0,self.nt-1):
-                b  = B.dot(U[t,:])       # left vect.
-                U[t+1,:]  = LA.solve(A,b)        # itterative solv.
-            return U
-
+        if isinstance(U, np.ndarray):
+            b  = self.B.dot(U[t,:])            # left vect.
+            U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
+            return U[t+1,:]
         else:
-            for t in range(0,self.nt-1):
-                b     = B.dot(self.U[t,:])            # left vect.
-                self.U[t+1,:]  = LA.solve(A,b)        # itterative solv.
+            b = self.B.dot(self.U[t,:])            # left vect.
+            self.U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
 
+    def run(self,solver='crank_nicolson',w=None):
+        if LA.norm(self.U[0,:]) == 0:
+            raise Exception('Initial condition not set')
+        else:
+            #self.solver(solver)
+            if isinstance(w,str):
+                U = self.U.copy()
+                for t in range(0,self.nt-1):
+                    U[t+1,:] = self.__getattribute__(solver)(t,U)
+                return U
+            else:
+                for t in range(0,self.nt-1):
+                    self.__getattribute__(solver)(t)
 class AdvDiff(model):
     '''1-D Advection Diffusion Class
 
