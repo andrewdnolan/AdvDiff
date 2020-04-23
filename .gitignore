@@ -1,5 +1,5 @@
 # WORKING DIR
-trash/
+trash/*
 
 # OSX shit
 *.DS_Store
