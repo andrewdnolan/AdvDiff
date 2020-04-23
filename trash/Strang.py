@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 from advdiff.solvers import TDMA
 from advdiff.model import advection
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+PERIODIC BOUNDARY CONDITIONS ARE NOOOOTTTTTTT IMPLEMNTED
+
+YA NEED TO FIX, BUT SEE FILE IN NOTEBOOK FOLDER
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 ########################################################
 #################   Init. Constant   ###################

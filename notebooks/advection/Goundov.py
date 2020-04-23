@@ -45,7 +45,7 @@ exact[0,:] = f(x,0)
 A = np.diagflat([[(1+2*r) for __ in range(nx)]]) + \
     np.diagflat([[  (-r)  for __ in range(nx-1)]],1) +\
     np.diagflat([[  (-r)  for __ in range(nx-1)]],-1)
-    
+
 A[0,-1] = -r
 A[-1,0] = -r
 
@@ -53,8 +53,8 @@ A[-1,0] = -r
 B = np.diagflat([[(1-2*r) for __ in range(nx)]]) + \
     np.diagflat([[  (r)   for __ in range(nx-1)]],1) +\
     np.diagflat([[  (r)   for __ in range(nx-1)]],-1)
-# B[0,-1] = r
-# B[-1,0] = r
+B[0,-1] = r
+B[-1,0] = r
 
 u_star = np.zeros((nt,nx))
 

@@ -5,11 +5,12 @@ import scipy.linalg as LA
 
 class model:
 
-    def parameters(self,L,nx,nt):
+    def parameters(self,L,nx,nt,linear=True):
         self.L  = L
         self.nx = nx
         self.dx = L/(nx-1)
         self.nt = nt
+        self.linear = linear
 
     def domain(self):
         self.tol = 1e-6
@@ -20,9 +21,21 @@ class model:
         self.parameters(**params)
         self.domain()
 
-    def FTCS(self,j,ustar=None):
+    def FTCS(self,j,ustar=None,):
 
-        if isinstance(ustar, np.ndarray):
+        if self.linear == False:
+            ustar[j+1,1:-1]  = ustar[j,1:-1] - ((self.dt*ustar[j,1:-1])/(self.dx*2))\
+                                * (ustar[j,2:] - ustar[j,0:-2])
+
+            ustar[j+1, 0] = ustar[j,0] - ((self.dt*ustar[j,0])/(self.dx*2))\
+                                * (ustar[j,1] - ustar[j,-1])
+
+            ustar[j+1,-1] = ustar[j, -1 ] - ((self.dt*ustar[j,-1])/(self.dx*2))\
+                                * (ustar[j,0] - ustar[j,-2])
+
+            return ustar[j+1,:]
+
+        elif isinstance(ustar, np.ndarray):
             ustar[j+1,1:-1]  = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
                                 * (ustar[j,2:] - ustar[j,0:-2])
 
@@ -45,7 +58,15 @@ class model:
     def UpWind(self,j,ustar=None):
         """ For only one time step!!!!
         """
-        if isinstance(ustar, np.ndarray):
+        if self.linear == False:
+            ustar[j+1,1:] = ustar[j,1:] - ((self.dt*ustar[j,1:])/self.dx)\
+                                * (ustar[j,1:] - ustar[j,0:-1])
+
+            ustar[j+1,0] = ustar[j,0] - ((self.dt*ustar[j,0])/self.dx)\
+                                * (ustar[j,0] - ustar[j,-1])
+            return ustar[j+1,:]
+
+        elif isinstance(ustar, np.ndarray):
             ustar[j+1,1:] = ustar[j,1:] - ((self.dt*self.a)/self.dx)\
                                 * (ustar[j,1:] - ustar[j,0:-1])
 
@@ -61,7 +82,24 @@ class model:
                                 * (self.U[j,0] - self.U[j,-1])
 
     def LaxWendroff(self,j,ustar=None):
-        if isinstance(ustar, np.ndarray):
+
+        if self.linear == False:
+
+            ustar[j+1,1:-1] = ustar[j,1:-1] - ((self.dt*ustar[j,1:-1])/(self.dx*2))\
+            *(ustar[j,2:] - ustar[j,0:-2]) + ((self.dt*ustar[j,1:-1])**2/(2*self.dx**2))\
+            *(ustar[j,2:] - 2*ustar[j,1:-1] + ustar[j,0:-2])
+
+            ustar[j+1,0] = ustar[j,0] - ((self.dt*ustar[j,0])/(self.dx*2))\
+            *(ustar[j,1] - ustar[j,-1]) + ((self.dt*ustar[j,-1])**2/(2*self.dx**2))\
+            *(ustar[j,1] - 2*ustar[j,0] + ustar[j,-1])
+
+            ustar[j+1,-1] = ustar[j,-1] - ((self.dt*ustar[j,-1])/(self.dx*2))\
+            *(ustar[j,0] - ustar[j,-2]) + ((self.dt*ustar[j,-1])**2/(2*self.dx**2))\
+            *(ustar[j,0] - 2*ustar[j,-1] + ustar[j,-2])
+
+            return ustar[j+1,:]
+
+        elif isinstance(ustar, np.ndarray):
 
             ustar[j+1,1:-1] = ustar[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
             *(ustar[j,2:] - ustar[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
@@ -77,6 +115,7 @@ class model:
 
             return ustar[j+1,:]
 
+
         else:
             self.U[j+1,1:-1] = self.U[j,1:-1] - ((self.dt*self.a)/(self.dx*2))\
             *(self.U[j,2:] - self.U[j,0:-2]) + ((self.dt*self.a)**2/(2*self.dx**2))\
@@ -91,7 +130,30 @@ class model:
             *(self.U[j,0] - 2*self.U[j,-1] + self.U[j,-2])
 
     def BeamWarming(self,j,ustar=None):
-        if isinstance(ustar, np.ndarray):
+        if self.linear == False:
+            ustar[j+1,2:] = ustar[j,2:] - ((self.dt*ustar[j,2:])/(self.dx*2))\
+                        * (3*ustar[j,2:] - 4*ustar[j,1:-1] + ustar[j,0:-2]) \
+                        + ((self.dt*ustar[j,2:])**2/(2*self.dx**2))*(ustar[j,2:] \
+                        - 2*ustar[j,1:-1] + ustar[j,0:-2])
+
+            ustar[j+1, 0] = ustar[j,0] - ((self.dt*ustar[j,0])/(self.dx*2))\
+                        * (3*ustar[j,0] - 4*ustar[j,-1] + ustar[j,-2]) \
+                        + ((self.dt*ustar[j,0])**2/(2*self.dx**2))*(ustar[j,0] \
+                        - 2*ustar[j,-1] + ustar[j,-2])
+
+            ustar[j+1, 1] = ustar[j,1] - ((self.dt*ustar[j,1])/(self.dx*2))\
+                        * (3*ustar[j,1] - 4*ustar[j,0] + ustar[j,-1]) \
+                        + ((self.dt*ustar[j,1])**2/(2*self.dx**2))*(ustar[j,1] \
+                        - 2*ustar[j,0] + ustar[j,-1])
+
+            ustar[j+1, 2] = ustar[j,2] - ((self.dt*ustar[j,2])/(self.dx*2))\
+                        * (3*ustar[j,2] - 4*ustar[j,1] + ustar[j, 0]) \
+                        + ((self.dt*ustar[j,2])**2/(2*self.dx**2))*(ustar[j,2] \
+                        - 2*ustar[j,1] + ustar[j, 0])
+
+            return ustar[j+1,:]
+
+        elif isinstance(ustar, np.ndarray):
             ustar[j+1,2:] = ustar[j,2:] - ((self.dt*self.a)/(self.dx*2))\
                         * (3*ustar[j,2:] - 4*ustar[j,1:-1] + ustar[j,0:-2]) \
                         + ((self.dt*self.a)**2/(2*self.dx**2))*(ustar[j,2:] \
@@ -245,7 +307,7 @@ class Diffusion(model):
         if dt != None:
             self.dt = dt
         else:
-            self.dt = (σ*self.dx)/κ
+            self.dt = (σ*self.dx)**2/κ
 
     def __init__(self,params,diff_params):
         super().__init__(params)
@@ -303,6 +365,7 @@ class Diffusion(model):
             else:
                 for t in range(0,self.nt-1):
                     self.__getattribute__(solver)(t)
+
 class AdvDiff(model):
     '''1-D Advection Diffusion Class
 
@@ -320,15 +383,17 @@ class AdvDiff(model):
                   specificed will calculate based on the CFL cond.
     '''
 
-    def coefficients(self,κ,σ,a,dt=None):
+    def coefficients(self,κ,a,σ,dt=None):
         self.κ  = κ
         self.a  = a
         self.σ  = σ
 
         if dt != None:
             self.dt = dt
+        elif self.linear == False:
+            self.dt = self.dx * self.κ
         else:
-            self.dt = (σ*self.dx)/a
+            self.dt = (σ*self.dx)**2/a
 
     def __init__(self,params,adv_params):
         super().__init__(params)
@@ -378,7 +443,7 @@ class AdvDiff(model):
 
         else:
             b = self.B.dot(self.U[t,:])            # left vect.
-            self.U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
+            self.U[t+1,:] = LA.solve(self.A,b)  # itterative solv.
 
     def Goundov(self,explict='UpWind',w=True):
         self.init_CN()
