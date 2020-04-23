@@ -78,6 +78,41 @@ def SOR(A,b,omega=1.75):
 
     return x_new
 
+def conjguate_gradient(A,b,x=None,thresh=1e-4):
+    """
+    Parameters
+    ----------
+    A: 2d symettric positive semi-definite matrix numpy.array
+    b: 1d numpy.array
+    x: 1d numpy.array of inital guess
+    thesh: threshold for convergence
+
+    Returns
+    -------
+    x: 1d numpy.array such that Ax=b
+    j: itteration
+    """
+    n = len(b)
+    if not x:
+        x = np.zeros(n)
+
+    r = np.dot(A,x) - b
+    p = -r
+    rdotr = np.dot(r.T,r)
+    for j in range(2*n):
+        Ap = np.dot(A,p)
+        alpha = rdotr / np.dot(p.T,Ap)
+        x += alpha * p
+        r += alpha * Ap
+        r_ndotr_n = np.dot(r.T,r)
+        beta = r_ndotr_n / rdotr
+        rdotr = r_ndotr_n
+        if rdotr < thresh:
+            #print('Ittr: {}'.format(j))
+            break
+        p = beta*p - r
+    return x, j
+    
 def TDMA(A,d):
     """Tridiagonal matrix algorithm (Thomas Algorithm)
     ref:https://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm

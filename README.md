@@ -24,8 +24,6 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 - LeVeque, Randall J. 2007. _Finite Difference Methods for Ordinary and Partial Differential Equations: Steady-State and Time-dependent Problems_. Classics in Applied Mathematics. Society of Industrial and Applied Mathematics (SIAM). doi:10.1137/1.9780898717839
 
 ## To Do:  
-- Avection Equation:
-  - [ ] Reference section
 
 - Fractional Step Methods:
   - [x] Peclet Number based experiments
