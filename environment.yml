@@ -7,5 +7,3 @@ dependencies:
   - scipy
   - matplotlib
   - sympy
-  - jupyter
-  - jupyterlab
