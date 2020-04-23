@@ -1,3 +1,14 @@
+import matplotlib.pyplot as plt
+
+plt.rcParams['font.size'] = 14
+plt.rcParams['axes.labelsize'] = 14
+plt.rcParams['axes.titlesize'] = 14
+plt.rcParams['xtick.labelsize'] = 14
+plt.rcParams['ytick.labelsize'] = 14
+plt.rcParams['legend.fontsize'] = 14
+plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['text.usetex'] = True
+
 class animation(object):
     '''Basic Animation Class
 
@@ -24,7 +35,6 @@ class animation(object):
         self.ylabels = ylabels
 
     def animate(self):
-        import matplotlib.pyplot as plt
         from matplotlib import animation, rc
         rc('animation', html='jshtml')
         plt.rcParams['font.size'] = 14

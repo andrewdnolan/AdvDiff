@@ -2,6 +2,8 @@
 
 import numpy as np
 import scipy.linalg as LA
+from scipy.sparse import linalg as SLA
+
 
 class model:
 
@@ -288,6 +290,7 @@ class Diffusion(model):
     '''1-D Diffusion Class
 
     Keyword arguments:
+
     -----------------
         params -- dictionary of numerical parameters
             L  -- length of domain
@@ -313,7 +316,7 @@ class Diffusion(model):
         super().__init__(params)
         self.diff_parameters(**diff_params)
 
-    def crank_nicolson(self,t,U=None,dt=None):
+    def crank_nicolson(self,t,U=None,dt=None,tol=1e-6):
         """ Crank Nicolson
 
         Keyword arguments:
@@ -345,14 +348,14 @@ class Diffusion(model):
             self.B[-1,0] = r
 
         if isinstance(U, np.ndarray):
-            b  = self.B.dot(U[t,:])            # left vect.
-            U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
+            b  = self.B.dot(U[t,:])                    # left vect.
+            U[t+1,:],out = SLA.cg(self.A,b,U[t,:],tol)   # itterative solv.
             return U[t+1,:]
         else:
-            b = self.B.dot(self.U[t,:])            # left vect.
-            self.U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
+            b = self.B.dot(self.U[t,:])                # left vect.
+            self.U[t+1,:] = SLA.cg(self.A,b)[0]        # itterative solv.
 
-    def run(self,solver='crank_nicolson',w=None):
+    def run(self,solver='crank_nicolson',w=None,tol=1e-6):
         if LA.norm(self.U[0,:]) == 0:
             raise Exception('Initial condition not set')
         else:
@@ -360,7 +363,7 @@ class Diffusion(model):
             if isinstance(w,str):
                 U = self.U.copy()
                 for t in range(0,self.nt-1):
-                    U[t+1,:] = self.__getattribute__(solver)(t,U)
+                    U[t+1,:] = self.__getattribute__(solver)(t,U,tol)
                 return U
             else:
                 for t in range(0,self.nt-1):
@@ -437,13 +440,13 @@ class AdvDiff(model):
         from advdiff.solvers import TDMA
 
         if isinstance(U, np.ndarray):
-            b  = self.B.dot(U[t,:])            # left vect.
-            U[t+1,:] = LA.solve(self.A,b).flatten()  # itterative solv.
+            b  = self.B.dot(U[t,:])                # left vect.
+            U[t+1,:] = SLA.cg(self.A,b)[0]         # itterative solv.
             return U[t+1,:]
 
         else:
             b = self.B.dot(self.U[t,:])            # left vect.
-            self.U[t+1,:] = LA.solve(self.A,b)  # itterative solv.
+            self.U[t+1,:] = SLA.cg(self.A,b)[0]    # itterative solv.
 
     def Goundov(self,explict='UpWind',w=True):
         self.init_CN()

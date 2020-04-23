@@ -23,25 +23,8 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 
 - LeVeque, Randall J. 2007. _Finite Difference Methods for Ordinary and Partial Differential Equations: Steady-State and Time-dependent Problems_. Classics in Applied Mathematics. Society of Industrial and Applied Mathematics (SIAM). doi:10.1137/1.9780898717839
 
-## To Do:   
-- Binder:
-  - [x] set up binder link
-  - [ ] fix `requirments.txt` file
-  - [ ] export environment  
-
-- Diffusion Equation:  
-   - [x] python implementation
-   - [x] Boundary conditions are wonky
-   - [x] Periodic Boundary Conditions ?
-   - [ ] stability analysis
-   - [ ] references section in notebook
-
+## To Do:  
 - Avection Equation:
-  - [x] port info from [MATH 709 Final Proj](https://github.com/andrewdnolan/MATH-709-Final-Project)
-  - [x] state mathematical problem and numerical methods to solve  
-  - [x] Beam-Splitting Method
-  - [x] Analytical Solution
-  - [x] stability analysis, CFL condition
   - [ ] Reference section
 
 - Fractional Step Methods:

@@ -1,8 +1,10 @@
 # WORKING DIR
-trash/*
+archived/
 
 # OSX shit
 *.DS_Store
+
+None0000000.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

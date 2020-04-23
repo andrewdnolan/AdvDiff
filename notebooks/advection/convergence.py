@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 sys.path.append('../')
 from advdiff.model import advection
 
-plt.rcParams['font.size'] = 14
-plt.rcParams['axes.labelsize'] = 14
-plt.rcParams['axes.titlesize'] = 14
-plt.rcParams['xtick.labelsize'] = 14
-plt.rcParams['ytick.labelsize'] = 14
-plt.rcParams['legend.fontsize'] = 14
-plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['font.size'] = 16
+plt.rcParams['axes.labelsize'] = 16
+plt.rcParams['axes.titlesize'] = 16
+plt.rcParams['xtick.labelsize'] = 16
+plt.rcParams['ytick.labelsize'] = 16
+plt.rcParams['legend.fontsize'] = 16
+plt.rcParams['figure.titlesize'] = 16
 plt.rcParams['text.usetex'] = True
 
 def η(x,t,a=3.):
