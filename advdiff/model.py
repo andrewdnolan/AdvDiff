@@ -304,9 +304,10 @@ class Diffusion(model):
                   specificed will calculate based on the CFL cond.
     '''
 
-    def diff_parameters(self,κ,σ,dt=None):
+    def diff_parameters(self,κ,σ,tol=1e-6,dt=None):
         self.κ  = κ
         self.σ  = σ
+        self.tol = tol
         if dt != None:
             self.dt = dt
         else:
@@ -316,7 +317,7 @@ class Diffusion(model):
         super().__init__(params)
         self.diff_parameters(**diff_params)
 
-    def crank_nicolson(self,t,U=None,dt=None,tol=1e-6):
+    def crank_nicolson(self,t,U=None,dt=None):
         """ Crank Nicolson
 
         Keyword arguments:
@@ -349,13 +350,13 @@ class Diffusion(model):
 
         if isinstance(U, np.ndarray):
             b  = self.B.dot(U[t,:])                    # left vect.
-            U[t+1,:],out = SLA.cg(self.A,b,U[t,:],tol)   # itterative solv.
+            U[t+1,:],out = SLA.cg(self.A,b,U[t,:],self.tol)   # itterative solv.
             return U[t+1,:]
         else:
             b = self.B.dot(self.U[t,:])                # left vect.
-            self.U[t+1,:] = SLA.cg(self.A,b)[0]        # itterative solv.
+            self.U[t+1,:] = SLA.cg(self.A,b,U[t,:],self.tol)[0]        # itterative solv.
 
-    def run(self,solver='crank_nicolson',w=None,tol=1e-6):
+    def run(self,solver='crank_nicolson',w=None):
         if LA.norm(self.U[0,:]) == 0:
             raise Exception('Initial condition not set')
         else:
@@ -363,7 +364,7 @@ class Diffusion(model):
             if isinstance(w,str):
                 U = self.U.copy()
                 for t in range(0,self.nt-1):
-                    U[t+1,:] = self.__getattribute__(solver)(t,U,tol)
+                    U[t+1,:] = self.__getattribute__(solver)(t,U)
                 return U
             else:
                 for t in range(0,self.nt-1):
@@ -386,17 +387,17 @@ class AdvDiff(model):
                   specificed will calculate based on the CFL cond.
     '''
 
-    def coefficients(self,κ,a,σ,dt=None):
+    def coefficients(self,κ,a,σ,tol=1e-6,dt=None):
         self.κ  = κ
         self.a  = a
         self.σ  = σ
-
+        self.tol = tol
         if dt != None:
             self.dt = dt
         elif self.linear == False:
             self.dt = self.dx * self.κ
         else:
-            self.dt = (σ*self.dx)**2/a
+            self.dt = min((σ*self.dx)**2/a, (σ*self.dx)**2/self.κ)
 
     def __init__(self,params,adv_params):
         super().__init__(params)
@@ -441,12 +442,12 @@ class AdvDiff(model):
 
         if isinstance(U, np.ndarray):
             b  = self.B.dot(U[t,:])                # left vect.
-            U[t+1,:] = SLA.cg(self.A,b)[0]         # itterative solv.
+            U[t+1,:] = SLA.cg(self.A,b,U[t,:],self.tol)[0]         # itterative solv.
             return U[t+1,:]
 
         else:
             b = self.B.dot(self.U[t,:])            # left vect.
-            self.U[t+1,:] = SLA.cg(self.A,b)[0]    # itterative solv.
+            self.U[t+1,:] = SLA.cg(self.A,b,U[t,:],self.tol)[0]    # itterative solv.
 
     def Goundov(self,explict='UpWind',w=True):
         self.init_CN()
