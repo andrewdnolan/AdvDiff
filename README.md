@@ -1,9 +1,9 @@
 # EASC 711: Numerical Methods Final Project   
 
 
-Numerical experiments with the advection diffusion equation using finite
+Numerical experiments with the diffusion, advection, and advection-diffusion equation using finite
 difference methods. This is the final project repository for EASC 711: Numerical
-Methods. Repository structure is loosely based on the [`CFD Python`](https://github.com/barbagroup/CFDPython)  repository.  
+Methods. Repository structure is based on the [`CFD Python`](https://github.com/barbagroup/CFDPython)  repository.  
 
 
 ## Notebooks
@@ -11,7 +11,7 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 
 - [1-Diffusion](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/Diffusion_1D.ipynb): Crank-Nicolson solution to the diffusion equation in one dimension.
 - [2-Advection](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/Advection_1D.ipynb): UpWind, Lax-Wendroff, and Beam-Splitting methods advection equation in one dimension.
-- [3-AdvDiff](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/AdvDiff_1D.ipynb):First and Second order operator splitting for solving the Advection-Diffusion equation in one dimension.
+- [3-AdvDiff](https://nbviewer.jupyter.org/github/andrewdnolan/AdvDiff/blob/master/notebooks/AdvDiff_1D.ipynb):First and Second order operator splitting for solving the Advection-Diffusion equation in one dimension. Solutions to the non-linear Burger's Equation. 
 
 ## References  
 
