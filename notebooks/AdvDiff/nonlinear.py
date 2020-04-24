@@ -8,13 +8,13 @@ from advdiff.model import AdvDiff
 from sympy.utilities.lambdify import lambdify
 
 plt.rcParams['text.usetex'] = True
-plt.rcParams['font.size'] = 14
-plt.rcParams['axes.labelsize'] = 14
-plt.rcParams['axes.titlesize'] = 14
-plt.rcParams['xtick.labelsize'] = 14
-plt.rcParams['ytick.labelsize'] = 14
-plt.rcParams['legend.fontsize'] = 14
-plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['font.size'] = 16
+plt.rcParams['axes.labelsize'] = 16
+plt.rcParams['axes.titlesize'] = 16
+plt.rcParams['xtick.labelsize'] = 16
+plt.rcParams['ytick.labelsize'] = 16
+plt.rcParams['legend.fontsize'] = 16
+plt.rcParams['figure.titlesize'] = 16
 
 x, kappa, t = sympy.symbols('x kappa t')
 phi = (sympy.exp(-(x - 4 * t)**2 / (4 * kappa * (t + 1))) +
@@ -100,9 +100,11 @@ ax[0].grid()
 plt.legend()
 ax[0].set_ylabel(r'$||U - u||_\infty$',fontsize='large')
 ax[0].set_xlabel(r'$\Delta x$')
+ax[0].set_title(r'$\Delta t = 10 \; \Delta x \kappa$')
 
 ax[1].grid()
 ax[1].set_xlabel(r'$\Delta x$')
+ax[1].set_title(r'$\Delta t = \Delta x \kappa$')
 
 plt.tight_layout()
 plt.show()

@@ -23,9 +23,3 @@ Methods. Repository structure is loosely based on the [`CFD Python`](https://git
 - __Seibold, B.__ (2009). 18.336 Numerical Methods for Partial Differential Equations: Operator Splitting. Massachusetts Institute of Technology: MIT OpenCourseWare, https://ocw.mit.edu/courses/mathematics/18-336-numerical-methods-for-partial-differential-equations-spring-2009/lecture-notes/MIT18_336S09_lec20.pdf.  
 - __Socolofsky S.__ (2005). _Special Topics on Mixing and Transport in the Environment: Advective Diffusion Equation_ Texas A&M University. https://ceprofs.civil.tamu.edu/ssocolofsky/CVEN489/Downloads/Book/Ch2.pdf  
 - __Trefethen and Bau__ (1997). _Numerical Linear Algebra_  Society of Industrial and Applied Mathematics (SIAM).
-
-## To Do:  
-
-- Fractional Step Methods:
-  - [x] Peclet Number based experiments
-  - [x] Stability and convergence experiments

@@ -14,12 +14,36 @@ plt.rcParams['ytick.labelsize'] = 14
 plt.rcParams['legend.fontsize'] = 14
 plt.rcParams['figure.titlesize'] = 14
 
-params = {'L':100.,'nx':1000,'nt':25}
+params = {'L':100.,'nx':1000,'nt':10}
 coeffs = {'κ':1e-4, 'a':3., 'σ':1.0, 'tol':1e-4 }
 
 #######################################
 ############   High Pe   ##############
 #######################################
+#
+# def f(x,t,κ,a):
+#     '''Analytical Solution to the Advec. Diff. Eqn.
+#     '''
+#     return np.exp(-κ*2**2*t)*np.sin(2*np.pi*2*(x-a*t))
+#
+# kappas = np.logspace(-6,4,11)
+# error  = np.zeros(kappas.shape[0])
+#
+#
+# for i,kappa in enumerate(kappas):
+#     #print('('+str(i+1)+'/' +str(len(kappas))+') Kappa ----->'+str(kappa))
+#     # for j, nx in enumerate(nxs):
+#     #     print('\t'+'('+str(i+1)+'/' +str(len(kappas))+') nx ----->'+str(nx)
+#     coeffs['κ'] = kappa
+#     model = AdvDiff(params,coeffs)
+#     model.U[0,:] = f(model.x,0,model.κ,model.a)
+#     Beam = model.Goundov('BeamWarming','w')
+#     anal = np.zeros_like(Beam)
+#     for t in range(model.nt):
+#         anal[t,:] = f(model.x,(t*model.dt),model.κ,model.a)
+#
+#     error[i] = LA.norm(Beam-anal,np.inf)
+
 def η(x, t=0.1, κ=3e-6, a=3e-6, x_0=50):
     return (4 / (1*(4*np.pi*κ*t)**0.5)) * np.exp(-(((x-(x_0 + a*t))**2)/(4*κ*t)))
 
@@ -75,4 +99,3 @@ plt.legend()
 ax.set_title(r'$\Delta x =$ {:.3f}'.format(model.dx) )
 ax.set_ylabel(r'$||U - u||_\infty$',fontsize='large')
 ax.set_xlabel(r'$Pe$')
-plt.show()

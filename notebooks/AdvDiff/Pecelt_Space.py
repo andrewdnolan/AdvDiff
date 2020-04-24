@@ -9,13 +9,13 @@ from advdiff.model import AdvDiff
 from sympy.utilities.lambdify import lambdify
 
 plt.rcParams['text.usetex'] = True
-plt.rcParams['font.size'] = 14
-plt.rcParams['axes.labelsize'] = 14
-plt.rcParams['axes.titlesize'] = 14
-plt.rcParams['xtick.labelsize'] = 14
-plt.rcParams['ytick.labelsize'] = 14
-plt.rcParams['legend.fontsize'] = 14
-plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['font.size'] = 16
+plt.rcParams['axes.labelsize'] = 16
+plt.rcParams['axes.titlesize'] = 16
+plt.rcParams['xtick.labelsize'] = 16
+plt.rcParams['ytick.labelsize'] = 16
+plt.rcParams['legend.fontsize'] = 16
+plt.rcParams['figure.titlesize'] = 16
 
 x, kappa, t = sympy.symbols('x kappa t')
 phi = (sympy.exp(-(x - 4 * t)**2 / (4 * kappa * (t + 1))) +
@@ -29,8 +29,8 @@ ufunc = lambdify((t, x, kappa), u)
 params = {'L':2*np.pi,'nx':50,'nt':5,'linear':False}
 coeffs = {'κ':1e-1, 'a':10., 'σ':1.0}
 
-nxs    = np.arange(50,1550,300)
-kappas = np.linspace(1e-2,1e0,10)
+nxs    = np.arange(50,1550,100)
+kappas = np.linspace(1e-2,1e0,50)
 error_kappas  = np.zeros((kappas.shape[0],nxs.shape[0]))
 
 
@@ -46,32 +46,33 @@ for i, nx in enumerate(nxs):
         model.U[0,:] = ufunc(0,model.x,model.κ)
 
         Strang_Beam_kap = model.Strang('BeamWarming','w')
-        # Goundov_Beam_kap = model.Goundov('BeamWarming','w')
-        # Strang_Lax_kap = model.Strang('LaxWendroff','w')
-        # Goundov_Lax_kap = model.Goundov('LaxWendroff','w')
 
         exact  =  np.zeros((model.nt,model.nx))
         for k in range(0,model.nt):
             exact[k,:] = ufunc(model.dt*k,model.x,model.κ)
 
-        # error_kappas[0,j,i] = LA.norm(Goundov_Beam_kap- exact,np.inf)
-        # error_kappas[1,j,i] = LA.norm(Goundov_Lax_kap- exact,np.inf)
 
         error_kappas[j,i] = LA.norm(Strang_Beam_kap- exact,np.inf)
-        # error_kappas[3,j,i] = LA.norm(Strang_Lax_kap- exact,np.inf)
 
-new_colors = [plt.get_cmap('viridis')(1. * i/len(kappas)) for i in range(len(kappas))]
-prop_cycle=cycler('color', new_colors)
 
-fig, ax = plt.subplots(1,1,sharey=True,figsize=(8,6))
-ax.set_prop_cycle(prop_cycle)
-for i, kappa in enumerate(kappas):
-    ax.loglog(1/nxs,error_kappas[i,:],label="PE={}".format(kappa))
+xx, yy = np.meshgrid(1/nxs,kappas)
+Pe = 4*xx/yy
 
-ax.grid()
-plt.legend()
-ax.set_ylabel(r'$||U - u||_\infty$',fontsize='large')
-ax.set_xlabel(r'$\Delta x$')
+from matplotlib import ticker, cm
+
+fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(17, 8))
+
+pes = ax[0].contourf(1/nxs,kappas,Pe,levels = np.logspace(-3,1,9), locator=ticker.LogLocator(), cmap=cm.PuBu_r)
+cbar0 = fig.colorbar(pes, ax = ax[0])
+cbar0.ax.set_title('$Pe$',fontsize='large', pad = 20)
+ax[0].set_ylabel(r'$\kappa$',fontsize='xx-large')
+ax[0].set_xlabel(r'$\Delta x$',fontsize='xx-large')
+ax[0].set_title('Peclet Number',fontsize='large')
+
+cs = ax[1].contourf(1/nxs,kappas,error_kappas, levels = np.logspace(-1,2,19), locator=ticker.LogLocator(), cmap=cm.viridis)
+cbar1 = fig.colorbar(cs, ax = ax[1])
+cbar1.ax.set_title('$||U - u||_\infty$',fontsize='large', pad = 20)
+ax[1].set_xlabel(r'$\Delta x$',fontsize='xx-large')
+ax[1].set_title('Error',fontsize='large')
 
 plt.tight_layout()
-plt.show()

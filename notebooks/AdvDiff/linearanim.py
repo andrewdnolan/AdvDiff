@@ -30,14 +30,21 @@ Adv.U[0,:] = η(Adv.x,0.1,diff_coef['κ'],adv_coef['a'])
 Diff = Diffusion(params,diff_coef)
 Diff.U[0,:] = η(Adv.x,0.1,diff_coef['κ'],adv_coef['a'])
 
-UStar = np.zeros_like(Diff.U)
-U = np.copy(Diff.U)  # numerical sol. array
+UStar_CNB = np.zeros_like(Diff.U)
+U_CNB = np.copy(Diff.U)  # numerical sol. array
+UStar_CNUP = np.zeros_like(Diff.U)
+U_CNUP = np.copy(Diff.U)  # numerical sol. array
+
 u = np.copy(Diff.U)  # analytical sol. array
 
 for t in range(params['nt']-1):
-    UStar[t,:] = Diff.crank_nicolson(t,U,Adv.dt)
-    U[t+1,:]   = Adv.BeamWarming(t,UStar)
+    UStar_CNB[t,:] = Diff.crank_nicolson(t,U_CNB,Adv.dt)
+    U_CNB[t+1,:]   = Adv.BeamWarming(t,UStar_CNB)
 
+    UStar_CNUP[t,:] = Diff.crank_nicolson(t,U_CNUP,Adv.dt)
+    U_CNUP[t+1,:]   = Adv.UpWind(t,UStar_CNUP)
+
+    #Analytical solution
     u[t+1,:] = η(Adv.x,(t*Adv.dt)+0.1, diff_coef['κ'],adv_coef['a'])
 
 from matplotlib import animation, rc
@@ -45,7 +52,7 @@ rc('animation', html='jshtml')
 
 fig, ax = plt.subplots(1,figsize=(15,8))
 
-ax.set_xlim(0, params['L'])
+ax.set_xlim(0, Diff.x[325])
 ax.set_ylim(-0.2, 1.75)
 
 ax.set_ylabel('Amp.')
@@ -53,14 +60,16 @@ ax.set_xlabel(' x ')
 
 line0, = ax.plot([], [], lw=2, color = 'darkslategrey',label='Analytical')
 line1, = ax.plot([], [], 'D',lw=2, color = 'darkseagreen',label='CN-Beam')
+line2, = ax.plot([], [],'x', color = 'darkmagenta',label='CN-Up')
 
-line = [line0,line1]
+line = [line0,line1,line2]
 ax.legend(loc=2)
 
 def animate(i):
-    global Diff, u, U
-    line[0].set_data(Diff.x, u[i,:])
-    line[1].set_data(Diff.x, U[i,:])
+    global Diff, u, U_CNB, U_CNUP
+    line[0].set_data(Diff.x[:325], u[i,:325])
+    line[1].set_data(Diff.x[:325], U_CNB[i,:325])
+    line[2].set_data(Diff.x[:325],U_CNUP[i,:325])
     return line
 
 anim = animation.FuncAnimation(fig, animate,

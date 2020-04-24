@@ -379,12 +379,16 @@ class AdvDiff(model):
             L  -- length of domain
             nx -- number of grid cell
             nt -- number of time steps
+            Linear -- Is the advection piece Linear? If not will implement
+                      the Burger's Equation
 
         coeffs -- dictionary of parameters Adv. Eqn.
             κ  -- diffusivity (scalar)
             σ  -- courant numner
             dt -- (optitonal) time step. If the time step is not
                   specificed will calculate based on the CFL cond.
+            tol-- delaut: 1e-6 tolerance to use for itterative solvers
+                  for implicit operator
     '''
 
     def coefficients(self,κ,a,σ,tol=1e-6,dt=None):
